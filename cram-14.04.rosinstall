@@ -15,4 +15,4 @@
 - git:
     local-name: iai_common_msgs
     uri: https://github.com/code-iai/iai_common_msgs.git
-	version: 412fc76df417189d4f65c2c72d272c3a8f47105a
+    version: 412fc76df417189d4f65c2c72d272c3a8f47105a
