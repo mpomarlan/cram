@@ -53,7 +53,8 @@
     (:cup . ((1.3 0.6 0.9) (0 0 0 1)))
     (:bowl . ((1.4 0.8 0.87) (0 0 0 1)))
     (:spoon . ((1.4 1.0 0.74132) (0 0 1 0)))
-    (:milk . ((1.4 0.62 0.95) (0 0 1 0)))))
+    (:milk . ((1.4 0.62 0.95) (0 0 1 0)))
+    (:tray-box . ((-0.89 1.9 0.9) (0 0 0.7 0.7)))))
 
 (defparameter *object-grasping-arms*
   '((:breakfast-cereal . :right)
@@ -74,7 +75,7 @@
   (btr-utils:kill-all-objects)
   (btr:add-objects-to-mesh-list "cram_pr2_pick_place_demo")
   (btr:detach-all-objects (btr:get-robot-object))
-  (let ((object-types '(:breakfast-cereal :cup :bowl :spoon :milk)))
+  (let ((object-types '(:breakfast-cereal :cup :bowl :spoon :milk :tray-box)))
     ;; spawn objects at default poses
     (let ((objects (mapcar (lambda (object-type)
                              (btr-utils:spawn-object
