@@ -66,6 +66,20 @@
       (exe:perform (desig:an action (type opening) (gripper (left right))))
       (exe:perform (desig:an action (type looking) (direction forward))))))
 
+#+perceiving-tray-on-kitchen-island
+(pr2-pms:with-real-robot
+  (desig:copy-designator
+   (perform (an action
+               (type detecting)
+               (object (an object
+                           (size "large")
+                           (color "yellow")
+                           (location (desig:a location
+                                              (on (desig:an object
+                                                            (owl-name "kitchen_island_counter_top")))))))))
+   :new-description '((:type :tray))))
+
+
 (cpl:def-cram-function demo-random (&optional
                                     (random t)
                                     (list-of-objects '(:bowl :spoon :cup :milk :breakfast-cereal)))
