@@ -79,25 +79,26 @@ just updated. Otherwise a new instance is created."))
   (declare (ignore type))
   nil)
 
-(defmethod register-object-designator-data
-    ((data cram-physics-utils:object-mesh-data-mixin) &key type)
-  (let ((instance-name (or
-                        (gethash (desig:object-identifier data)
-                                 *object-identifier-to-instance-mappings*)
-                        (setf (gethash (desig:object-identifier data)
-                                       *object-identifier-to-instance-mappings*)
-                              (gensym (string (desig:object-identifier data)))))))
-    (prolog `(and (btr:bullet-world ?world)
-                  (-> (btr:object ?world ,instance-name)
-                      (btr:assert ?world
-                                  (btr:object-pose ,instance-name ,(desig:object-pose data)))
-                      (btr:assert ?world
-                                  (btr:object :mesh ,instance-name ,(desig:object-pose data)
-                                              :mesh ,(object-mesh data)
-                                              :mass ,(object-mass data)
-                                              :types ,(list type)
-                                              :disable-face-culling t)))))))
+;; (defmethod register-object-designator-data
+;;     ((data cram-physics-utils:object-mesh-data-mixin) &key type)
+;;   (let ((instance-name (or
+;;                         (gethash (desig:object-identifier data)
+;;                                  *object-identifier-to-instance-mappings*)
+;;                         (setf (gethash (desig:object-identifier data)
+;;                                        *object-identifier-to-instance-mappings*)
+;;                               (gensym (string (desig:object-identifier data)))))))
+;;     (prolog `(and (btr:bullet-world ?world)
+;;                   (-> (btr:object ?world ,instance-name)
+;;                       (btr:assert ?world
+;;                                   (btr:object-pose ,instance-name ,(desig:object-pose data)))
+;;                       (btr:assert ?world
+;;                                   (btr:object :mesh ,instance-name ,(desig:object-pose data)
+;;                                               :mesh ,(object-mesh data)
+;;                                               :mass ,(object-mass data)
+;;                                               :types ,(list type)
+;;                                               :disable-face-culling t)))))))
 
+;; TODO: for objects without type use their bounding box to spawn a bounding box
 (defmethod register-object-designator-data
     (data &key type)
   (let ((instance-name (or
@@ -111,18 +112,31 @@ just updated. Otherwise a new instance is created."))
     (prolog `(and (btr:bullet-world ?world)
                   (btr:item-type ?world ?name ,type)
                   (btr:retract ?world (btr:object ?name))))
-    (prolog `(and (btr:bullet-world ?world)
-                  (-> (btr:object ?world ,instance-name)
-                      (btr:assert ?world
-                                  (btr:object-pose ,instance-name ,(desig:object-pose data)))
-                      (btr:assert ?world
-                                  (btr:object :mesh ,instance-name ,(desig:object-pose data)
-                                              :mesh ,type ;; ,(object-mesh data)
-                                              :mass 0.2 ;; ,(object-mass data)
-                                              ;; :types ,(list type)
-                                              ;; :disable-face-culling t
-                                              :color ,(desig:object-color data))))
-                  (btr:simulate ?world 10)))))
+    ;; spawn the object into bullet world
+    (if type
+        (prolog `(and (btr:bullet-world ?world)
+                      (-> (btr:object ?world ,instance-name)
+                          (btr:assert ?world
+                                      (btr:object-pose ,instance-name ,(desig:object-pose data)))
+                          (btr:assert ?world
+                                      (btr:object :mesh ,instance-name ,(desig:object-pose data)
+                                                  :mesh ,type ;; ,(object-mesh data)
+                                                  :mass 0.2 ;; ,(object-mass data)
+                                                  ;; :types ,(list type)
+                                                  ;; :disable-face-culling t
+                                                  :color ,(desig:object-color data))))
+                      (btr:simulate ?world 10)))
+        (prolog `(and (btr:bullet-world ?world)
+                      (-> (btr:object ?world ,instance-name)
+                          (btr:assert ?world
+                                      (btr:object-pose ,instance-name ,(desig:object-pose data)))
+                          (btr:assert ?world
+                                      (btr:object :visualization-box
+                                                  ,instance-name ,(desig:object-pose data)
+                                                  :mass 0.2 ;; ,(object-mass data)
+                                                  :color ,(desig:object-color data)
+                                                  :size (0.2375 0.1575 0.0475))))
+                      (btr:simulate ?world 10))))))
 
 (defmethod register-object-designator-data
     ((data cram-physics-utils:object-point-data-mixin) &key type)
