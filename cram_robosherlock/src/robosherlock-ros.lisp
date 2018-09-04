@@ -93,6 +93,7 @@
                          ;; below are the only keys supported by RS at the moment
                          (if (or (string-equal key-string "type")
                                  (string-equal key-string "shape")
+                                 (string-equal key-string "size")
                                  (string-equal key-string "color")
                                  (string-equal key-string "cad-model")
                                  (string-equal key-string "location")
@@ -166,10 +167,11 @@
 (defun which-estimator-for-object (object-description)
   (let ((type (second (find :type object-description :key #'car)))
         (cad-model (find :cad-model object-description :key #'car))
-        (obj-part (find :obj-part object-description :key #'car)))
+        (obj-part (find :obj-part object-description :key #'car))
+        (shape (second (find :shape object-description :key #'car))))
     (if cad-model
         :templatealignment
-        (if (eq type :spoon)
+        (if (or (eq type :spoon) (and shape (string-equal shape "flat")))
             :2destimate
             (if obj-part
                 :handleannotator
@@ -226,6 +228,10 @@
                         (caadr rs-colors)
                         (cadr rs-colors)))
                    '(0.5 0.5 0.5)))))
+
+      (when (eq name :||)
+        (setf name (intern (string-upcase (format nil "object-~a" (random 100))) :keyword))
+        (setf (second (find :name combined-properties :key #'car)) name))
 
       (let* ((pose-stamped-in-camera
                (find-pose-in-camera-for-object combined-properties))
