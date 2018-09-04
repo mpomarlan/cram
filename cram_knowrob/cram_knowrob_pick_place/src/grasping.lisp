@@ -41,6 +41,7 @@
 (defmethod get-object-type-gripping-effort ((object-type (eql :knife))) 100)
 (defmethod get-object-type-gripping-effort ((object-type (eql :plate))) 100)
 (defmethod get-object-type-gripping-effort ((object-type (eql :tray))) 100)
+(defmethod get-object-type-gripping-effort ((object-type (eql :tray-box))) 100)
 (defmethod get-object-type-gripping-effort ((object-type (eql :bottle))) 60)
 (defmethod get-object-type-gripping-effort ((object-type (eql :cup))) 50)
 (defmethod get-object-type-gripping-effort ((object-type (eql :milk))) 15)
@@ -56,7 +57,8 @@
 (defmethod get-object-type-gripper-opening ((object-type (eql :fork))) 0.04)
 (defmethod get-object-type-gripper-opening ((object-type (eql :knife))) 0.04)
 (defmethod get-object-type-gripper-opening ((object-type (eql :plate))) 0.02)
-(defmethod get-object-type-gripper-opening ((object-type (eql :tray))) 0.02)
+(defmethod get-object-type-gripper-opening ((object-type (eql :tray))) 0.03)
+(defmethod get-object-type-gripper-opening ((object-type (eql :tray-box))) 0.03)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -78,8 +80,10 @@
 
   (<- (object-type-grasp :plate :left-side))
   (<- (object-type-grasp :plate :right-side))
-  (<- (object-type-grasp :tray :left-side))
-  (<- (object-type-grasp :tray :right-side))
+  (<- (object-type-grasp :tray :side))
+  (<- (object-type-grasp :tray :side))
+  (<- (object-type-grasp :tray-box :side))
+  (<- (object-type-grasp :tray-box :side))
 
   (<- (object-type-grasp :bottle :left-side))
   (<- (object-type-grasp :bottle :right-side))
@@ -132,7 +136,7 @@
 (defparameter *plate-2nd-pregrasp-z-offset* 0.03 "in meters") ; grippers can't go into table
 
 ;; SIDE grasp
-(def-object-type-to-gripper-transforms '(:plate :tray) :left :left-side
+(def-object-type-to-gripper-transforms :plate :left :left-side
   :grasp-translation `(0.0 ,*plate-grasp-y-offset* ,*plate-grasp-z-offset*)
   :grasp-rot-matrix
   `((0             1 0)
@@ -150,6 +154,64 @@
     (,(- (cos *plate-grasp-roll-offset*)) 0  ,(- (sin *plate-grasp-roll-offset*))))
   :pregrasp-offsets `(0.0 ,(- *plate-pregrasp-y-offset*) ,*lift-z-offset*)
   :2nd-pregrasp-offsets `(0.0 ,(- *plate-pregrasp-y-offset*) ,*plate-2nd-pregrasp-z-offset*)
+  :lift-offsets *lift-offset*
+  :2nd-lift-offsets *lift-offset*)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; TRAY ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; if tray is a mesh
+
+;; (defparameter *tray-grasp-y-offset* 0.215 "in meters")
+;; (defparameter *tray-grasp-z-offset* 0.0405 "in meters")
+;; (defparameter *tray-pregrasp-y-offset* 0.1 "in meters")
+
+;; SIDE grasp
+;; (def-object-type-to-gripper-transforms '(:tray :tray-box) :left :side
+;;   :grasp-translation `(0.0 ,*tray-grasp-y-offset* ,*tray-grasp-z-offset*)
+;;   :grasp-rot-matrix
+;;   `((0 -1  0)
+;;     (0  0 -1)
+;;     (1  0  0))
+;;   :pregrasp-offsets `(0.0 ,*tray-pregrasp-y-offset* ,*lift-z-offset*)
+;;   :2nd-pregrasp-offsets `(0.0 ,*tray-pregrasp-y-offset* ,*tray-grasp-z-offset*)
+;;   :lift-offsets *lift-offset*
+;;   :2nd-lift-offsets *lift-offset*)
+;; (def-object-type-to-gripper-transforms '(:tray :tray-box) :right :side
+;;   :grasp-translation `(0.0 ,(- *tray-grasp-y-offset*) ,*tray-grasp-z-offset*)
+;;   :grasp-rot-matrix
+;;   `((0  1  0)
+;;     (0  0  1)
+;;     (1  0  0))
+;;   :pregrasp-offsets `(0.0 ,(- *tray-pregrasp-y-offset*) ,*lift-z-offset*)
+;;   :2nd-pregrasp-offsets `(0.0 ,(- *tray-pregrasp-y-offset*) ,*tray-grasp-z-offset*)
+;;   :lift-offsets *lift-offset*
+;;   :2nd-lift-offsets *lift-offset*)
+
+;; if tray is a primitive object and is perceived with robosherlock
+
+(defparameter *tray-grasp-x-offset* 0.22 "in meters")
+(defparameter *tray-grasp-z-offset* 0.03 "in meters")
+(defparameter *tray-pregrasp-x-offset* 0.1 "in meters")
+
+(defparameter *sin-pi/4* (sin (/ pi 4)))
+(defparameter *-sin-pi/4* (- (cos (/ pi 4))))
+
+(def-object-type-to-gripper-transforms '(:tray :tray-box) :left :side
+  :grasp-translation `(,(- *tray-grasp-x-offset*) 0.0  ,*tray-grasp-z-offset*)
+  :grasp-rot-matrix `((,*sin-pi/4*  0 ,*sin-pi/4*)
+                      (0           -1  0)
+                      (,*sin-pi/4*  0 ,*-sin-pi/4*))
+  :pregrasp-offsets `(,(- *tray-pregrasp-x-offset*) 0.0  ,*lift-z-offset*)
+  :2nd-pregrasp-offsets `(,(- *tray-pregrasp-x-offset*) 0.0  ,*tray-grasp-z-offset*)
+  :lift-offsets *lift-offset*
+  :2nd-lift-offsets *lift-offset*)
+(def-object-type-to-gripper-transforms '(:tray :tray-box) :right :side
+  :grasp-translation `(,*tray-grasp-x-offset* 0.0 ,*tray-grasp-z-offset*)
+  :grasp-rot-matrix `((,*-sin-pi/4*  0 ,*-sin-pi/4*)
+                      (0             1            0)
+                      (,*sin-pi/4*   0  ,*-sin-pi/4*))
+  :pregrasp-offsets `(,*tray-pregrasp-x-offset* 0.0 ,*lift-z-offset*)
+  :2nd-pregrasp-offsets `(,*tray-pregrasp-x-offset* 0.0 ,*tray-grasp-z-offset*)
   :lift-offsets *lift-offset*
   :2nd-lift-offsets *lift-offset*)
 
