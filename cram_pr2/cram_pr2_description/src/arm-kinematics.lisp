@@ -60,13 +60,13 @@
 ;;     ("r_wrist_roll_joint" -2.5861844605475843d0)))
 
 (defparameter *right-carrying-joint-states*
-  '(("r_shoulder_pan_joint" -1.712587449591307d0)
-    ("r_shoulder_lift_joint" -0.2567290370386635d0)
-    ("r_upper_arm_roll_joint" -1.4633501125737374d0)
-    ("r_elbow_flex_joint" -2.1221670650093913d0)
-    ("r_forearm_roll_joint" 1.7663253481913623d0)
-    ("r_wrist_flex_joint" -0.07942669250968948d0)
-    ("r_wrist_roll_joint" 0.05106258161229582d0)))
+  '(("r_shoulder_pan_joint" -1.9705099361888898d0)
+    ("r_shoulder_lift_joint" -0.24615467165060673d0)
+    ("r_upper_arm_roll_joint" -1.4869222720501107d0)
+    ("r_elbow_flex_joint" -2.0115622415123764d0)
+    ("r_forearm_roll_joint" 12.676922265023531d0)
+    ("r_wrist_flex_joint" -1.3656591429539526d0)
+    ("r_wrist_roll_joint" 34.35776341319429d0)))
 
 (defparameter *right-parking-joint-states*
   '(("r_shoulder_pan_joint" -0.08181428617939712d0)
@@ -101,13 +101,13 @@
 ;;     ("l_wrist_roll_joint" 2.586184460547585d0)))
 
 (defparameter *left-carrying-joint-states*
-  '(("l_shoulder_pan_joint" 1.9652919379395388d0)
-    ("l_shoulder_lift_joint" -0.26499816732737785d0)
-    ("l_upper_arm_roll_joint" 1.3837617139225473d0)
-    ("l_elbow_flex_joint" -2.1224566064321584d0)
-    ("l_forearm_roll_joint" 16.99646118944817d0)
-    ("l_wrist_flex_joint" -0.07350789589924167d0)
-    ("l_wrist_roll_joint" 0.0)))
+  '(("l_shoulder_pan_joint" 2.062873026568711d0)
+    ("l_shoulder_lift_joint" -0.34113359812138705d0)
+    ("l_upper_arm_roll_joint" 1.428019646000636d0)
+    ("l_elbow_flex_joint" -1.9588657025687721d0)
+    ("l_forearm_roll_joint" 18.598941192152594d0)
+    ("l_wrist_flex_joint" -1.1304700918786845d0)
+    ("l_wrist_roll_joint" 15.86175271317169d0)))
 
 (defparameter *left-parking-joint-states*
   '(("l_shoulder_pan_joint" 0.1709440184822959d0)

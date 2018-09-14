@@ -160,7 +160,8 @@ Store found pose into designator or throw error if good pose not found."
                                                        "Robot is in collision with environment.")
                                      (cpl:sleep pr2-proj:*debug-long-sleep-duration*)
                                      (btr::restore-world-state world-state world)
-                                     (cpl:fail 'common-fail:manipulation-goal-in-collision)))
+                                     ;;(cpl:fail 'common-fail:manipulation-goal-in-collision)
+                                     ))
                                  left-poses
                                  right-poses)))))))))
       (btr::restore-world-state world-state world))))
@@ -185,7 +186,8 @@ Store found pose into designator or throw error if good pose not found."
                 (roslisp:ros-warn (coll-check place)
                                   "Placing pose of ~a is unreachable.~%Propagating up."
                                   placing-action-desig)
-                (cpl:fail 'common-fail:object-unreachable)))
+                ;; (cpl:fail 'common-fail:object-unreachable)
+                ))
 
            (let ((placing-action-referenced (desig:reference placing-action-desig)))
              (destructuring-bind (_action object-designator arm
@@ -234,7 +236,7 @@ Store found pose into designator or throw error if good pose not found."
                                                   "Robot is in collision with environment.")
                                 (cpl:sleep pr2-proj:*debug-long-sleep-duration*)
                                 (btr::restore-world-state world-state world)
-                                ;; (cpl:fail 'common-fail:manipulation-goal-in-collision)
+                                ;(cpl:fail 'common-fail:manipulation-goal-in-collision)
                                 ))
                             left-poses
                             right-poses)))))))

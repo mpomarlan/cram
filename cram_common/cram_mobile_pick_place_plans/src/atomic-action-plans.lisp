@@ -142,9 +142,11 @@
         (cram-occasions-events:on-event
          (make-instance 'cram-plan-occasions-events:robot-state-changed))))))
 
+(defparameter *park-arms* t)
 
 (cpl:def-cram-function park-arms (&key (arm '(:left :right)) (carry t))
-  (let ((carry?
+  (when *park-arms*
+    (let ((carry?
           (or (prolog:prolog `(cpoe:object-in-hand ?obj ?arm))
               carry)))
    (flet ((get-arm-parking-joint-states (arm)
@@ -204,7 +206,7 @@
                               (type moving-arm-joints)
                               (right-configuration ?right-configuration))))))
          (cram-occasions-events:on-event
-          (make-instance 'cram-plan-occasions-events:robot-state-changed)))))))
+          (make-instance 'cram-plan-occasions-events:robot-state-changed))))))))
 
 
 (cpl:def-cram-function release (?left-or-right)

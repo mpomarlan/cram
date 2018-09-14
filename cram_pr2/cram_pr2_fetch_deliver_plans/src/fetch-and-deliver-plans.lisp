@@ -177,7 +177,7 @@ the `look-pose-stamped'."
 
 
 (cpl:def-cram-function search-for-object (?object-designator ?search-location
-                                                             &optional (retries 9))
+                                                             &optional (retries 15))
   "Searches for `?object-designator' in its likely location `?search-location'."
 
   (cpl:with-failure-handling
@@ -321,7 +321,9 @@ and using the grasp and arm specified in `pick-up-action' (if not NIL)."
 
                   (exe:perform pick-up-action)))))))
 
-      (pp-plans:park-arms)
+      (unless (eq (desig:desig-prop-value ?object-designator :type) :tray-box)
+        (pp-plans:park-arms))
+      
       (desig:current-desig ?object-designator))))
 
 

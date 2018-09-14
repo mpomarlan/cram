@@ -79,7 +79,6 @@
                                                             (owl-name "kitchen_island_counter_top")))))))))
    :new-description '((:type :tray))))
 
-
 (cpl:def-cram-function demo-random (&optional
                                     (random t)
                                     (list-of-objects '(:bowl :spoon :cup :milk :breakfast-cereal)))
