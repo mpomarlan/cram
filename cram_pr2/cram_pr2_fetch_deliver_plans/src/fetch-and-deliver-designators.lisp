@@ -84,7 +84,8 @@
     (or (spec:property ?action-designator (:arm ?arm))
         (equal ?arm NIL)))
 
-  (<- (desig:action-grounding ?action-designator (deliver ?object-designator ?location-designator
+  (<- (desig:action-grounding ?action-designator (deliver ?object-designator ?arm
+                                                          ?location-designator
                                                           ?robot-location-designator
                                                           ?place-action-designator))
     (spec:property ?action-designator (:type :delivering))
@@ -97,7 +98,9 @@
     (desig:current-designator ?some-robot-location-designator ?robot-location-designator)
     (desig:desig-prop ;; spec:property
      ?action-designator (:place-action ?some-place-action-designator))
-    (desig:current-designator ?some-place-action-designator ?place-action-designator))
+    (desig:current-designator ?some-place-action-designator ?place-action-designator)
+    (or (spec:property ?action-designator (:arm ?arm))
+        (equal ?arm NIL)))
 
   (<- (desig:action-grounding ?action-designator (transport
                                                   ?object-designator

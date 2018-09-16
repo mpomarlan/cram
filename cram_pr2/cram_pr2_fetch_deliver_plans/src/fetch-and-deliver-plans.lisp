@@ -327,7 +327,7 @@ and using the grasp and arm specified in `pick-up-action' (if not NIL)."
       (desig:current-desig ?object-designator))))
 
 
-(cpl:def-cram-function deliver (?object-designator ?target-location
+(cpl:def-cram-function deliver (?object-designator ?arm ?target-location
                                                    ?target-robot-location place-action)
   ;; Reference the `?target-location' to see if that works at all
   ;; If not, delivering is impossible so throw a OBJECT-UNDERLIVERABLE failure
@@ -458,6 +458,8 @@ and using the grasp and arm specified in `pick-up-action' (if not NIL)."
                                                 (target ?target-location))))
                                   (desig:an action
                                             (type placing)
+                                            (desig:when ?arm
+                                              (arm ?arm))
                                             (object ?object-designator)
                                             (target (desig:a location
                                                              (pose ?pose-at-target-loc-in-base)))))))
@@ -553,6 +555,8 @@ and using the grasp and arm specified in `pick-up-action' (if not NIL)."
                       (return)))
                  (exe:perform (desig:an action
                                         (type delivering)
+                                        (when ?arm
+                                              (arm ?arm))
                                         (object ?fetched-object)
                                         (target ?delivering-location)
                                         (robot-location ?deliver-robot-location)
