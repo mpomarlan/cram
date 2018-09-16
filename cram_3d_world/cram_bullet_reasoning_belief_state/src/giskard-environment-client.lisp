@@ -169,6 +169,7 @@
 
   ;; (multiple-value-bind (key-value-pairs-list quantifier)
   ;;     (ensure-robosherlock-input-parameters keyword-key-value-pairs-list quantifier)
+  (return-from call-giskard-environment-service nil)
   (roslisp:with-fields (giskard_msgs-srv:error_msg)
         (cpl:with-failure-handling
             (((or simple-error roslisp:service-call-error) (e)

@@ -59,10 +59,27 @@
                (roslisp:ros-warn (pick-and-place perceive) "~a" e)
                (cpl:retry))))
         (let* ((resulting-designators
-                 (exe:perform
-                  (desig:a motion
-                           (type detecting)
-                           (object ?object-designator))))
+                 (if (or (eq (desig:desig-prop-value ?object-designator :type) :tray-box)
+                         (eq (desig:desig-prop-value ?object-designator :type) :tray))
+                     (let ((desig (exe:perform
+                                    (desig:a motion
+                                             (type detecting)
+                                             (object
+                                              (desig:an object
+                                                        (size "large")
+                                                        (color "yellow")
+                                                        (location (desig:a location
+                                                                           (on (desig:an object
+                                                                                         (owl-name "kitchen_island_counter_top")))))))))))
+                       (setf (slot-value desig 'desig:description)
+                             (desig:update-designator-properties
+                              `((:type :tray))
+                              (slot-value desig 'desig:description)))
+                       desig)
+                     (exe:perform
+                      (desig:a motion
+                               (type detecting)
+                               (object ?object-designator)))))
                (resulting-designator
                  (funcall object-chosing-function resulting-designators)))
           (if (listp resulting-designators)
