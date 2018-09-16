@@ -164,12 +164,14 @@
   )
 
 
+(defparameter *manipulating-tray* nil)
 (defun call-giskard-environment-service (add-or-kill-or-attached name
                                          &optional pose dimensions)
 
   ;; (multiple-value-bind (key-value-pairs-list quantifier)
   ;;     (ensure-robosherlock-input-parameters keyword-key-value-pairs-list quantifier)
-  (return-from call-giskard-environment-service nil)
+  (when *manipulating-tray*
+    (return-from call-giskard-environment-service nil))
   (roslisp:with-fields (giskard_msgs-srv:error_msg)
         (cpl:with-failure-handling
             (((or simple-error roslisp:service-call-error) (e)
