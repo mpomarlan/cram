@@ -357,14 +357,27 @@ of the object should _not_ be updated."
     :compound compound))
 
 (defun list-directly-supported-objects (world object)
-  (mapcar
-    (lambda (object-name)
-      (object world object-name))
-    (cut:force-ll
-     (cut:var-value
-       '?os
-       (car
-         (prolog:prolog `(and (findall ?t (supported-by ,world ?t ,(name object)) ?os))))))))
+  (let* ((object-names 
+           (cond
+             ((typep object 'btr:rigid-body)
+               (let* ((name (name object))
+                      (name (split-sequence:split-sequence #\. (format nil "~a" name)))
+                      (robot-name (intern (first name) :keyword))
+                      (link-name (second name)))
+                 (if link-name
+                   (cut:force-ll (cut:var-value '?os (car (prolog:prolog `(findall ?t (supported-by ,world ?t ,robot-name ,link-name) ?os)))))
+                   (cut:force-ll (cut:var-value '?os (car (prolog:prolog `(findall ?t (supported-by ,world ?t ,robot-name) ?os))))))))
+             ((typep object 'btr:item)
+               (cut:force-ll (cut:var-value '?os (car (prolog:prolog `(findall ?t (supported-by ,world ?t ,(name object)) ?os))))))
+             (T nil)))
+         (object-names (remove-if #'null object-names))
+         (object-names (remove-duplicates object-names)))
+    (remove-if #'null
+               (mapcar (lambda (object-name)
+                         (let* ((object (object world object-name)))
+                           (when (typep object 'btr:item)
+                             object)))
+                       object-names))))
 
 (defun list-supported-objects-internal (world to-visit visited)
   (if to-visit
