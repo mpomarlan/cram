@@ -74,7 +74,7 @@
     (-> (lisp-pred identity ?belief-name)
         (equal ?object-name ?belief-name)
         (and (desig:desig-prop ?object-designator (:type ?object-type))
-             (btr:bullet-world ?w)
+             (btr:bullet-world ?world)
              (btr:item-type ?world ?object-name ?object-type))))
 
   (<- (desig:desig-location-prop ?designator ?location)
