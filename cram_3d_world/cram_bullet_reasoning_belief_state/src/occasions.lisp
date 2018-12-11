@@ -39,6 +39,7 @@
     (btr:attached ?world ?robot ?link ?object-name)
     (once
      (and (object-designator-name ?object ?object-name)
+          (desig:desig-prop ?object (:name ?object-name))
           (desig:obj-desig? ?object)))
     (cram-robot-interfaces:end-effector-link ?robot ?side ?link))
 
