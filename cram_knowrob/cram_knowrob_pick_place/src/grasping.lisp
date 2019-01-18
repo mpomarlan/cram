@@ -78,8 +78,7 @@
 
   (<- (object-type-grasp :plate :left-side))
   (<- (object-type-grasp :plate :right-side))
-  (<- (object-type-grasp :tray :left-side))
-  (<- (object-type-grasp :tray :right-side))
+  (<- (object-type-grasp :tray :top))
 
   (<- (object-type-grasp :bottle :left-side))
   (<- (object-type-grasp :bottle :right-side))
