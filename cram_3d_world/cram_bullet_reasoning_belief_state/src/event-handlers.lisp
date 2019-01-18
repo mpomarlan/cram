@@ -34,11 +34,13 @@
          (btr-object-name (cpoe:event-object-name event))
          (btr-object-name-string (symbol-name btr-object-name))
          (btr-object (btr:object btr:*current-bullet-world* btr-object-name))
+         (event-arm (cpoe:event-arm event))
+         (event-arm (if (listp event-arm) (car event-arm) event-arm))
          (link (cut:var-value
                 '?ee-link
                 (car (prolog:prolog
                       `(and (cram-robot-interfaces:robot ?robot)
-                            (cram-robot-interfaces:end-effector-link ?robot ,(cpoe:event-arm event)
+                            (cram-robot-interfaces:end-effector-link ?robot ,event-arm
                                                                      ?ee-link)))))))
     (when (cut:is-var link) (error "[BTR-BELIEF OBJECT-ATTACHED] Couldn't find robot's EE link."))
     ;; first detach from environment in case it is attached
