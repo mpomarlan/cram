@@ -61,7 +61,7 @@
 
 (defun desig-has-data (desig)
   (with-slots ((data desig:data)) desig
-    data))
+    (and data (typep data 'desig:object-designator-data))))
 
 (def-fact-group occasion-utilities (object-designator-name desig:desig-location-prop)
   (<- (object-designator-name ?name ?name)
@@ -73,9 +73,10 @@
         (and (not (bound ?object-designator))
              (lisp-fun unique-object-designators ?object-designators)
              (member ?one-object-designator-from-chain ?object-designators)
-             (desig:current-designator ?one-object-designator-from-chain ?object-designator)
-             (lisp-pred desig-has-data ?object-designator)))
-    (lisp-fun get-designator-object-name ?object-designator ?belief-name)
+             (desig:current-designator ?one-object-designator-from-chain ?object-designator)))
+    (or (and (lisp-pred desig-has-data ?object-designator)
+             (lisp-fun get-designator-object-name ?object-designator ?belief-name))
+        (equal ?belief-name nil))
     (-> (lisp-pred identity ?belief-name)
         (equal ?object-name ?belief-name)
         (and (desig:desig-prop ?object-designator (:type ?object-type))
