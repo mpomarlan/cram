@@ -350,6 +350,8 @@
 ;;;;;;;;;;;;;;; spatial relation ON for item objects ;;;;;;;;;;;;;;;;;;;;;;
   (<- (costmap:desig-costmap ?designator ?costmap)
     (desig:desig-prop ?designator (:on ?object))
+    (prolog:or (prolog:not (desig:desig-prop ?designator (:for ?_)))
+               (desig:desig-prop ?designator (:for nil)))
     (btr-belief:object-designator-name ?object ?object-instance-name)
     (btr:bullet-world ?world)
     (btr:item-type ?world ?object-instance-name ?_)
@@ -361,6 +363,25 @@
      ?costmap)
     (costmap:costmap-add-cached-height-generator
      (make-object-bounding-box-height-generator ?object-instance :on)
+     ?costmap))
+
+;; height generator for locations ((on something) (name something) (for some-obj))
+  (<- (costmap:desig-costmap ?designator ?costmap)
+    (btr:bullet-world ?world)
+    (desig:desig-prop ?designator (:on ?on-object))
+    (desig:desig-prop ?on-object (:name ?object-instance-name))
+    (btr:item-type ?world ?object-instance-name ?_)
+    (desig:desig-prop ?designator (:for ?for-object))
+    (desig:desig-prop ?for-object (:name ?for-object-name))
+    (btr:%object ?world ?for-object-name ?for-object-instance)
+    (btr:%object ?world ?object-instance-name ?object-instance)
+    (costmap:costmap ?costmap)
+    (costmap:costmap-add-function
+     on-bounding-box
+     (make-object-bounding-box-costmap-generator ?object-instance)
+     ?costmap)
+    (costmap:costmap-add-cached-height-generator
+     (make-item-on-item-bb-height-generator ?object-instance ?for-object-instance) ;(make-object-bounding-box-height-generator ?object-instance :on)
      ?costmap))
 
 ;;;;;;;;;;;;;;; spatial relation ON for environment objects ;;;;;;;;;;;;;;;;;;;;;;
