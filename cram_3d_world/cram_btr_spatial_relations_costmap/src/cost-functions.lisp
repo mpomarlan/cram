@@ -133,15 +133,26 @@ ref-sz/2 + ref-padding + max-padding + max-sz + max-padding + for-padding + for-
   (let* ((bounding-box-dims (btr:calculate-bb-dims object))
          (dimensions-x/2 (/ (cl-transforms:x bounding-box-dims) 2))
          (dimensions-y/2 (/ (cl-transforms:y bounding-box-dims) 2))
-         (center-x (cl-transforms:x (cl-transforms:origin (btr:pose object))))
-         (center-y (cl-transforms:y (cl-transforms:origin (btr:pose object)))))
+         (adj-dimensions-x/2 (if (< 0.03 dimensions-x/2) (- dimensions-x/2 0.03) dimensions-x/2))
+         (adj-dimensions-y/2 (if (< 0.03 dimensions-y/2) (- dimensions-y/2 0.03) dimensions-y/2))
+         (object-pose (btr:pose object))
+         (center-x (cl-transforms:x (cl-transforms:origin object-pose)))
+         (center-y (cl-transforms:y (cl-transforms:origin object-pose)))
+         (yaw (cl-transforms:get-yaw (cl-transforms:orientation object-pose)))
+         (costmap-transform (cl-tf:make-transform (cl-tf:make-3d-vector center-x center-y 0)
+                                                  (cl-tf:euler->quaternion :az yaw))))
     (lambda (x y)
-      (if (and
-           (< x (+ center-x dimensions-x/2))
-           (> x (- center-x dimensions-x/2))
-           (< y (+ center-y dimensions-y/2))
-           (> y (- center-y dimensions-y/2)))
-          1.0 0.0))))
+      (let* ((query-point (cl-tf:transform* (cl-tf:transform-inv costmap-transform)
+                                            (cl-tf:make-transform (cl-tf:make-3d-vector x y 0)
+                                                                  (cl-tf:euler->quaternion))))
+             (x (cl-tf:x (cl-tf:translation query-point)))
+             (y (cl-tf:y (cl-tf:translation query-point))))
+        (if (and
+             (< x (+ 0 adj-dimensions-x/2))
+             (> x (- 0 adj-dimensions-x/2))
+             (< y (+ 0 adj-dimensions-y/2))
+             (> y (- 0 adj-dimensions-y/2)))
+            1.0 0.0)))))
 
 ;;; TODO: maybe include bb into deciding not just the pose and ratio
 (defun get-closest-edge (obj-pose supp-obj-pose supp-obj-dims)
@@ -437,6 +448,24 @@ if it is on the sign side of the axis. "
            (cl-transforms:z (btr:calculate-bb-dims for-object)))
          (for-object-z
            (+ environment-object-top (/ for-object-height 2))))
+    (constantly
+     (list for-object-z))))
+
+(defun make-item-on-item-bb-height-generator (on-objects for-object)
+  (let* ((on-object-top
+           (apply #'max
+                  (mapcar (lambda (on-object)
+                            (+ (cl-transforms:z
+                                (cl-transforms:origin (btr:pose on-object)))
+                               (/ (cl-transforms:z (btr:calculate-bb-dims on-object))
+                                  2.0)))
+                          (if (listp on-objects)
+                              on-objects
+                              (list on-objects)))))
+         (for-object-height
+           (cl-transforms:z (btr:calculate-bb-dims for-object)))
+         (for-object-z
+           (+ on-object-top (/ for-object-height 2) 0.01)))
     (constantly
      (list for-object-z))))
 
