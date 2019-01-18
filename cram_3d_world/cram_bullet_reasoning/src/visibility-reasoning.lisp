@@ -31,7 +31,7 @@
 (in-package :btr)
 
 (defvar *rendering-context* nil)
-(defvar *visibility-threshold* 0.9)
+(defvar *visibility-threshold* 0.55)
 
 (defstruct object-visibility
   percentage
