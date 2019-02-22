@@ -94,7 +94,6 @@
                (left-poses ?left-lift-poses)
                (right-poses ?right-lift-poses)))))
 
-
 (cpl:def-cram-function place (?object-designator
                               ?arm
                               ?left-reach-poses ?right-reach-poses
@@ -104,7 +103,7 @@
   (roslisp:ros-info (pick-place place) "Reaching")
   (cpl:with-failure-handling
       ((common-fail:manipulation-low-level-failure (e)
-         (roslisp:ros-warn (pp-plans pick-up)
+         (roslisp:ros-warn (pp-plans place)
                            "Manipulation messed up: ~a~%Ignoring."
                            e)
          ;; (return)
@@ -117,7 +116,7 @@
   (roslisp:ros-info (pick-place place) "Putting")
   (cpl:with-failure-handling
       ((common-fail:manipulation-low-level-failure (e)
-         (roslisp:ros-warn (pp-plans pick-up)
+         (roslisp:ros-warn (pp-plans place)
                            "Manipulation messed up: ~a~%Ignoring."
                            e)
          (return)))
@@ -139,7 +138,7 @@
   (roslisp:ros-info (pick-place place) "Retracting")
   (cpl:with-failure-handling
       ((common-fail:manipulation-low-level-failure (e)
-         (roslisp:ros-warn (pp-plans pick-up)
+         (roslisp:ros-warn (pp-plans place)
                            "Manipulation messed up: ~a~%Ignoring."
                            e)
          (return)
