@@ -565,6 +565,15 @@ current joint states"
 (defmethod joint-state ((obj robot-object) name)
   (nth-value 0 (gethash name (joint-states obj))))
 
+(defun setf-joint-state-internal (robot-object name new-value)
+  (with-slots (urdf) robot-object
+    (assert (gethash name (cl-urdf:joints urdf)) ()
+            "Joint ~a unknown" name)
+    (let* ((joint-states (joint-states robot-object))
+           (joint (gethash name (cl-urdf:joints urdf))))
+      (when joint
+        (setf (gethash name joint-states) new-value)))))
+
 (defmethod (setf joint-state) (new-value (obj robot-object) name)
   (with-slots (urdf) obj
     (assert (gethash name (cl-urdf:joints urdf)) ()
@@ -579,17 +588,17 @@ current joint states"
                  (cl-transforms:reference-transform
                   (cl-urdf:origin joint))
                  (joint-transform joint new-value))))
-          (setf (gethash name joint-states) new-value)
+          (setf-joint-state-internal obj name new-value)
           (update-link-poses
-           obj (cl-urdf:child joint)
-           (cl-transforms:transform*
-            (cl-transforms:reference-transform parent-pose)
-            (if (cl-urdf:collision parent)
-                (cl-transforms:transform-inv
-                 (cl-transforms:reference-transform
-                  (cl-urdf:origin (cl-urdf:collision parent))))
-                (cl-transforms:make-identity-transform))
-            joint-transform)))))))
+              obj (cl-urdf:child joint)
+              (cl-transforms:transform*
+                (cl-transforms:reference-transform parent-pose)
+                (if (cl-urdf:collision parent)
+                    (cl-transforms:transform-inv
+                      (cl-transforms:reference-transform
+                        (cl-urdf:origin (cl-urdf:collision parent))))
+                    (cl-transforms:make-identity-transform))
+                joint-transform)))))))
 
 (defun set-joint-state (robot name new-state)
   (setf (joint-state robot name) new-state))

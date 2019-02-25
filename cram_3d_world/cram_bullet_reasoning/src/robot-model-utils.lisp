@@ -73,15 +73,21 @@ sensor_msgs/JointStates message."
                           (positions position))
         joint-states
       (map nil (lambda (name state)
-                 (setf (joint-state robot name) state))
-           names positions)))
+                 (setf-joint-state-internal robot name state))
+           names positions)
+      ;; Contains a call to update-link-poses, so not redundant!
+      (setf (pose robot)
+            (pose robot))))
   (:method ((joint-states list) (robot robot-object))
     "Sets the joint states of `robot' to the values specifies in the
     list `joint-states'. `joint-states' is a list of the form:
 
       ([(name value)]*)"
     (loop for (name value) in joint-states do
-      (setf (joint-state robot name) value))))
+      (setf-joint-state-internal robot name value))
+    ;; Contains a call to update-link-poses, so not redundant!
+    (setf (pose robot)
+          (pose robot))))
 
 (defun make-robot-joint-state-msg (robot &key joint-names (time 0))
   (let ((joint-names (map 'vector #'identity (or joint-names
