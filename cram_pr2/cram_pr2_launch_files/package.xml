@@ -10,7 +10,8 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <run_depend>giskard_examples</run_depend>
+  <!-- <run_depend>giskard_examples</run_depend>
+    -->
   <run_depend>nav_pcontroller</run_depend>
   <run_depend>joint_trajectory_action</run_depend>
   <run_depend>pr2_arm_kinematics</run_depend>
